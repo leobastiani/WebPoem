@@ -1,0 +1,1 @@
+nodemon -e py,txt --ignore test --exec WebPoem.py

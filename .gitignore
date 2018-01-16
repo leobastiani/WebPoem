@@ -1,3 +1,12 @@
+# WebPoem
+jquery.js
+.idea
+debug.log
+dir(driver).txt
+log.txt
+logs.txt
+saves
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
