@@ -7,29 +7,38 @@ from selenium.webdriver.common.by import By
 
 import selenium.webdriver.chrome.webdriver
 import os
+import sys
 
 
 class WebPoem:
-    @staticmethod
-    # navegadores:
-    def GoogleChrome():
-        WebPoem.driver = selenium.webdriver.chrome.webdriver.WebDriver()
-        # define driver como global
-        global driver
-        driver = WebPoem.driver
-        # para acessar nas funções abaixo
-        return WebPoem.driver
-
+    driver = None
+    title = ''
 
 def WebPoemMain(main, *args, **kwargs):
     try:
         main()
+        print(sys.argv[0], 'OK')
     except Exception as e:
-        print('Aperte ENTER para encerrar.')
-        input()
         raise e
+        print(sys.argv[0], 'FAIL')
+        pause()
     finally:
         driver.quit()
+
+def pause():
+    print('Aperte ENTER para encerrar.')
+    input()
+
+###############
+# navegadores #
+###############
+def GoogleChrome():
+    WebPoem.driver = selenium.webdriver.chrome.webdriver.WebDriver()
+    # define driver como global
+    global driver
+    driver = WebPoem.driver
+    # para acessar nas funções abaixo
+    return WebPoem.driver
 
 def goTo(url):
     driver.get(url)
@@ -138,6 +147,26 @@ def send():
         Elements.last.send_keys(Keys.ENTER)
 
 
+#####################
+# funções de tempo: #
+#    h, m, s, ms    #
+#####################
+def ms(x):
+    return x / 1000
+
+def s(x):
+    return x
+
+def m(x):
+    return x * 60
+
+def h(x):
+    return 60 * m(x)
+############################
+# fim das funções de tempo #
+############################
+
+
 def Number(str):
     nums = Numbers(str)
     if len(nums) == 0:
@@ -171,6 +200,11 @@ def Numbers(str):
         return float(n.replace('.', '').replace(',', '.'))
 
     return [numberfy(x) for x in numbers]
+
+
+def search(s):
+    text = driver.find_element(By.TAG_NAME, 'body').text
+    return text.find(s) != -1
 
 import re
 from WebPoem.Elements import Elements

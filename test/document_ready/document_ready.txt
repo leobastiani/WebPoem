@@ -1,0 +1,10 @@
+document_ready
+
+Navegue com o Google Chrome.
+
+{import os}
+
+Acesse:
+    file:///"+os.getcwd()+"/test/document_ready/index.htm
+
+Encontre "Me encontre".

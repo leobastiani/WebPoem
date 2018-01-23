@@ -1,0 +1,10 @@
+window_location
+
+Navegue com o Google Chrome.
+
+{import os}
+
+Acesse:
+    file:///"+os.getcwd()+"/test/window_location/index.htm
+
+Encontre "Me encontre".

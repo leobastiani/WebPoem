@@ -1,0 +1,10 @@
+copy_me
+
+Navegue com o Google Chrome.
+
+{import os}
+
+Acesse:
+    file:///"+os.getcwd()+"/test/copy_me/index.htm
+
+Encontre "Me encontre".

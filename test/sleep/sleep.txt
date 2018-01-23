@@ -1,0 +1,12 @@
+sleep
+
+Navegue com o Google Chrome.
+
+{import os}
+
+Acesse:
+    file:///"+os.getcwd()+"/test/sleep/index.htm
+
+Espere 100ms.
+
+Encontre "Me encontre".

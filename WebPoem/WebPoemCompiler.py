@@ -7,7 +7,7 @@ import re
 import sys
 
 
-DEBUG = sys.flags.debug or True
+DEBUG = sys.flags.debug or False
 def debug(*args):
     '''funciona como print, mas só é executada se sys.flags.debug == 1'''
     if not DEBUG:
@@ -20,6 +20,8 @@ def WebPoemCompiler(filePath, outputPath):
     debug("filePath:", filePath)
     debug("outputPath:", outputPath)
     global lines
+    global identacaoAtual
+    identacaoAtual = 0
 
     # vamos filtrar as linhas importantes
     with open(filePath, 'rb') as file:
@@ -46,11 +48,10 @@ def WebPoemCompiler(filePath, outputPath):
     # vê a quantidade de espaços ou tabs no início da
     # linha
     output = ident(Lines())
+    debug("output:", output)
     output = readFile('py/header.py') + output
     with open(outputPath, 'w', encoding='utf-8') as file:
         file.write(output)
-
-    print("output:", output)
 
 
 def readFile(filePath):
@@ -109,20 +110,23 @@ def ident(string):
     lines = string.split('\n')
     return '\n'.join(['    '+x for x in lines])
 
+def incrIdent():
+    global identacaoAtual
+    identacaoAtual += 1
+    return identacaoAtual
+
 ##################################################
 # Funções para serem executadas pelos statements #
 ##################################################
 
 def navegue():
     # Navegue com o Google Chrome
-    print("StatementAtual:", StatementAtual)
+    debug("StatementAtual:", StatementAtual)
     if StatementAtual['NAVEGADOR'] == 'Chrome':
         GoogleChrome = 'GoogleChrome'
     else:
-        print('Outros navegadores não foram implementados ainda.')
-        import sys
-        sys.exit(0)
-    return 'WebPoem.'+GoogleChrome+'()\n'+Lines()
+        raise 'Outros navegadores não foram implementados ainda.'
+    return 'driver = '+GoogleChrome+'()\n'+Lines()
 
 def goTo():
     line, _ = getNewLine()
@@ -137,9 +141,7 @@ def preencha():
         campo = re.match(r'^(.+):$', lineCampo)
 
         if campo is None:
-            print('Tratar o caso em que não tem : no fim da linha')
-            import sys
-            sys.exit(0)
+            raise 'Tratar o caso em que não tem : no fim da linha'
 
         campo = campo.group(1)
 
@@ -154,8 +156,8 @@ def preencha():
         while True:
             # com a mesma identação
             lineValor, identacao = getNewLine()
-            print("identacaoAtual:", identacaoAtual)
-            print("identacao:", identacao)
+            debug("identacaoAtual:", identacaoAtual)
+            debug("identacao:", identacao)
             if identacao < identacaoAtual + 2:
                 goBackLine(lineValor, identacao)
                 break
@@ -206,9 +208,7 @@ def copyline():
     line = StatementAtual['line']
     fecha = line[len(line)-1]
     if fecha != '}':
-        print('Não fechei o parênteses')
-        import sys
-        sys.exit(0)
+        raise 'Não fechei o parênteses'
     line = line[:len(line)-1]
     return line+'\n'+Lines()
 
@@ -216,8 +216,7 @@ def doWhile():
     input_nome = StatementAtual['input']
     acao = acaoToWebPoem(StatementAtual['ACAO'])
 
-    global identacaoAtual
-    identacaoAtual += 1
+    incrIdent()
     middle = ident(Lines())
 
     ret = '''while True:
@@ -231,18 +230,20 @@ def doWhile():
 def While():
     debug("StatementAtual:", StatementAtual)
 
-    global identacaoAtual
-    identacaoAtual += 1
+    incrIdent()
 
     inp = StatementAtual['input']
-    if StatementAtual['ENQUANTO'] == 'ENQUANTO':
+    if StatementAtual.get('ENQUANTO') == 'ENQUANTO':
         return 'while '+inp+':\n'+ident(Lines())
 
     return 'for element in '+inp+':\n'+ident(Lines())
 
+def encontre():
+    debug("StatementAtual:", StatementAtual)
+    return 'assert search("'+StatementAtual['input']+'") == True\n'+Lines()
+
 def newWindow():
-    global identacaoAtual
-    identacaoAtual += 1
+    incrIdent()
     return 'with NewWindow():\n'+ident(Lines())
 
 def salve():
@@ -250,6 +251,25 @@ def salve():
 
 def enviar():
     return 'send()\n'+Lines()
+
+def espere():
+    inputTime = StatementAtual['input']
+    debug("inputTime:", inputTime)
+
+    # removo os espaços
+    inputTime = re.sub(r'\s+', '', inputTime)
+    inputTime = inputTime.lower()
+
+    # pega os tempos
+    inputTime = re.findall(r'(\d+)([a-z]+)?', inputTime)
+    # exemplo de inputTime
+    # [('10', 'm'), ('5', 's'), ('100', 'ms')]
+    # ou
+    # [(5, '')]
+    inputTime = [unidade+'('+time+')' for time, unidade in inputTime]
+    inputTime  = '+'.join(inputTime)
+
+    return 'sleep('+inputTime+')\n'+Lines()
 
 ###################
 # Fim das funções #
@@ -274,6 +294,7 @@ StatementAtual = {}
 class Statement:
     termos = {
         # todos são expressões regulares
+        # faltam um \b no final
         'NAVEGUE': ['navegue'],
         'ACESSE': ['acesse'],
         'PREENCHA': ['preencha'],
@@ -285,11 +306,13 @@ class Statement:
         'NO': ['em', 'na', 'no'],
         'É': ['é'],
         'ENQUANTO': ['enquanto'],
+        'PARA CADA': ['para cada'],
         'NOVA': ['nova'],
         'JANELA': ['janela'],
+        'ESPERE': ['espere'],
         'ENVIAR': ['enviar'],
+        'ENCONTRE': ['encontre', 'encontrar'],
         'SALVE': ['salve'],
-        'PARA CADA': ['para cada'],
         'CONSEGUIR': ['puder'],
         'NAVEGADOR': {
             'Chrome': ['Google Chrome', 'Chrome'],
@@ -350,6 +373,8 @@ def StatementMatch(statement, line):
         # retorna a própria linha
         if statement.startswith('input'):
             if line[0] == '$' or line[0] == '(':
+                # é uma entrada igual o seletor
+                # do jQuery
                 if line[0] == '$':
                     # começa com $
                     line = line[1:]
@@ -357,14 +382,32 @@ def StatementMatch(statement, line):
                 startParenteses, endParenteses, _ = parenteses(line)
 
                 if startParenteses != 0:
-                    print('Erro na seleção de $')
-                    import sys
-                    sys.exit(0)
+                    raise 'Erro na seleção de $'
 
                 ret = line[startParenteses+2:endParenteses-1]
                 line = line[endParenteses+1:]
                 debug("ret:", ret)
                 debug("line:", line)
+
+            elif line[0] == '"' or line[0] == '\'':
+                # a linha começa com aspas
+                startChar = line[0]
+                start = 1
+                end = start + 1
+                ret = None
+                # percorre por end
+                while end < len(line):
+                    if line[end] == startChar:
+                        # encontrei
+                        ret = line[start:end]
+                        line = line[end+1:]
+                        break
+                    elif line[end] == '\\':
+                        end += 1
+                    end += 1
+
+                if ret is None:
+                    raise 'O par das aspas não foi encontrado.'
 
             else:
                 # caso genérico
@@ -418,15 +461,21 @@ Statements = [
     [ salve,
         Statement('SALVE', '.'),
     ],
+    [ encontre,
+        Statement('ENCONTRE', 'input', '.'),
+    ],
     [ doWhile,
         Statement('ENQUANTO', 'CONSEGUIR', 'ACAO', 'NO', 'input', ':'),
     ],
     [ While,
-        Statement('PARA CADA', 'input', ':'),
         Statement('ENQUANTO', 'input', ':'),
+        Statement('PARA CADA', 'input', ':'),
     ],
     [ preencha,
         Statement('PREENCHA', ':'),
+    ],
+    [ espere,
+        Statement('ESPERE', 'input', '.'),
     ],
     [ enviar,
         Statement('ENVIAR', '.'),
@@ -445,3 +494,27 @@ Statements = [
     ]
     
 ]
+
+
+# adiciona um \b em todos
+# os Statement.termos
+
+def addBarraB(termos):
+    for termo in termos:
+        if re.match(r'\w+', termo):
+            l = termos[termo]
+
+            # não é uma lista
+            if isinstance(l, dict):
+                addBarraB(l)
+            else:
+                # é uma lista
+                newList = []
+                for word in l:
+                    newList.append(word + r'\b')
+
+                termos[termo] = newList
+
+
+addBarraB(Statement.termos)
+

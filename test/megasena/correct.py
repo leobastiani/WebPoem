@@ -5,7 +5,7 @@ from WebPoem import *
 
 @WebPoemMain
 def main():
-    WebPoem.GoogleChrome()
+    driver = GoogleChrome()
     goTo("http://loterias.caixa.gov.br/wps/portal/loterias/landing/megasena/")
     numId = 2004
     while numId > 0:

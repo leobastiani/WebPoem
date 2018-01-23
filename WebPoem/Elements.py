@@ -37,7 +37,7 @@ class Elements:
     def click(self):
         if len(self.els) == 0:
             return False
-        self.els.click()
+        self.els[0].click()
         return True
 
 

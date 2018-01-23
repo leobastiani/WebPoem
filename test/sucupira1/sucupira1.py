@@ -5,11 +5,11 @@ from WebPoem import *
 
 @WebPoemMain
 def main():
-    WebPoem.GoogleChrome()
+    driver = GoogleChrome()
     goTo("https://sucupira.capes.gov.br/sucupira/public/consultas/coleta/programa/listaPrograma.jsf")
-    findInput("Instituição de Ensino Superior").fill('UNIVERSIDADE ESTADUAL DE CAMPINAS')
+    findInput("Instituição de Ensino Superior").fill("UNIVERSIDADE ESTADUAL DE CAMPINAS")
     findElement("33003017 UNIVERSIDADE ESTADUAL DE CAMPINAS (UNICAMP)").click()
-    findInput("Programa").fill('CIÊNCIA DA COMPUTAÇÃO')
+    findInput("Programa").fill("CIÊNCIA DA COMPUTAÇÃO")
     findElement("Consultar").click()
     Lupa = findElement(".glyphicon-search")
     while True:
