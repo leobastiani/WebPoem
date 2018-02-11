@@ -8,7 +8,8 @@ logs.txt
 saves
 extension/unpacked/WebPoem.js
 extension/unpacked/WebPoem.unwrapped.js
-extension/unpacked/dist
+extension/unpacked/dist/WebPoem.pem
+extension/unpacked/dist/WebPoem.zip
 bin
 
 # Byte-compiled / optimized / DLL files
