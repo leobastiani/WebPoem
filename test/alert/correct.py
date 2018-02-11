@@ -7,7 +7,7 @@ from WebPoem import *
 def main():
     driver = GoogleChrome()
     import os
-    goTo("file:///"+os.getcwd()+"/index.htm")
+    goTo("http://localhost:3000/alert/index.htm")
     with NewWindow():
         findElement("OK").click()
     with NewWindow():

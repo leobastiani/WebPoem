@@ -32,7 +32,7 @@ try:
             dest    = folder / (name+'.py')
             correct = folder / 'correct.py'
             index   = folder / 'index.htm'
-
+            # copia o arquivo para a raiz
             if not src.exists():
                 return
 
@@ -66,13 +66,12 @@ try:
             if not args.compile_only and not args.no_exec:
                 # solução de:
                 # https://stackoverflow.com/questions/67631/how-to-import-a-module-given-the-full-path
+                shutil.copy(str(dest), cwd)
                 infile = str(dest.absolute())
                 basename = os.path.basename(infile)
                 basename_without_extension = basename[:-3]
-                os.chdir(str(folder.absolute()))
                 imp.load_source(basename_without_extension, infile)
-                # volta o dir que tava
-                os.chdir(cwd)
+                os.remove(basename)
             
         # chamo essa função que acabei de criar
         testcase = unittest.FunctionTestCase(

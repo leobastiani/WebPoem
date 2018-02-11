@@ -6,6 +6,5 @@ from WebPoem import *
 @WebPoemMain
 def main():
     driver = GoogleChrome()
-    import os
-    goTo("file:///"+os.getcwd()+"/index.htm")
+    goTo("http://localhost:3000/document_ready/index.htm")
     assert search("Me encontre")

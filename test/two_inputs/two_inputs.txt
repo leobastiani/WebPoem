@@ -2,10 +2,8 @@ two_inputs
 
 Navegue com o Google Chrome
 
-{import os}
-
 Acesse
-    file:///"+os.getcwd()+"/index.htm
+    http://localhost:3000/two_inputs/index.htm
 
 Preencha
     Two Inputs

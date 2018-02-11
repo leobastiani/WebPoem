@@ -2,9 +2,7 @@ ajax
 
 Navegue com o Google Chrome
 
-{import os}
-
 Acesse
-    file:///"+os.getcwd()+"/index.htm
+    http://localhost:3000/ajax/index.htm
 
 Encontre "Me encontre"

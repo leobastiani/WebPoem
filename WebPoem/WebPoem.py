@@ -6,6 +6,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 
 import selenium.webdriver.chrome.webdriver
+from selenium.common.exceptions import TimeoutException
 import os
 import sys
 
@@ -42,10 +43,10 @@ def pause():
 ###############
 def GoogleChrome():
     from selenium.webdriver.chrome.options import Options
-    chrome_options = Options()
-    chrome_options.add_extension('D:\\Facul\\IC\\WebPoem\\WebPoem\\extension\\dist\\WebPoem.crx')
+    options = Options()
+    options.add_extension('./extension/dist/WebPoem.crx')
 
-    WebPoem.driver = selenium.webdriver.chrome.webdriver.WebDriver(chrome_options=chrome_options)
+    WebPoem.driver = selenium.webdriver.chrome.webdriver.WebDriver(chrome_options=options)
     # define driver como global
     global driver
     driver = WebPoem.driver
@@ -56,7 +57,11 @@ def GoogleChrome():
     return WebPoem.driver
 
 def goTo(url):
-    driver.get(url)
+    try:
+        driver.get(url)
+    except TimeoutException as e:
+        pass
+
 
 def send_keys(val):
     if WebPoem.alert:

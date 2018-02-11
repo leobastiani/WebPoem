@@ -6,8 +6,7 @@ from WebPoem import *
 @WebPoemMain
 def main():
     driver = GoogleChrome()
-    import os
-    goTo("file:///"+os.getcwd()+"/index.htm")
+    goTo("http://localhost:3000/prompt/index.htm")
     findElement("Clique em mim").click()
     with NewWindow():
         send_keys("123")

@@ -1,11 +1,11 @@
-copy_me
+alert
 
 Navegue com o Google Chrome
 
 {import os}
 
 Acesse
-    file:///"+os.getcwd()+"/index.htm
+    http://localhost:3000/alert/index.htm
 
 Na nova janela
     Clique em OK
