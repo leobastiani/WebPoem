@@ -5,6 +5,7 @@ from WebPoem import *
 
 @WebPoemMain
 def main():
+    WebPoem.title = "window_location"
     driver = GoogleChrome()
     import os
     goTo("http://localhost:3000/window_location/index.htm")

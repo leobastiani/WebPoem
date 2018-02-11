@@ -5,6 +5,7 @@ from WebPoem import *
 
 @WebPoemMain
 def main():
+    WebPoem.title = "alert"
     driver = GoogleChrome()
     import os
     goTo("http://localhost:3000/alert/index.htm")

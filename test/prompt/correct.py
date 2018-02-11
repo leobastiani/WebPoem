@@ -5,6 +5,7 @@ from WebPoem import *
 
 @WebPoemMain
 def main():
+    WebPoem.title = "prompt"
     driver = GoogleChrome()
     goTo("http://localhost:3000/prompt/index.htm")
     findElement("Clique em mim").click()

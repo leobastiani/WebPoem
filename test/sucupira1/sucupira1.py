@@ -5,6 +5,7 @@ from WebPoem import *
 
 @WebPoemMain
 def main():
+    WebPoem.title = "sucupira exemplo 1"
     driver = GoogleChrome()
     goTo("https://sucupira.capes.gov.br/sucupira/public/consultas/coleta/programa/listaPrograma.jsf")
     findInput("Instituição de Ensino Superior").fill("33003017")

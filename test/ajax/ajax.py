@@ -5,6 +5,7 @@ from WebPoem import *
 
 @WebPoemMain
 def main():
+    WebPoem.title = "ajax"
     driver = GoogleChrome()
     goTo("http://localhost:3000/ajax/index.htm")
     assert search("Me encontre")

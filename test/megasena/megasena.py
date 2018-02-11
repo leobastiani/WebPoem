@@ -5,6 +5,7 @@ from WebPoem import *
 
 @WebPoemMain
 def main():
+    WebPoem.title = "megasena exemplo"
     driver = GoogleChrome()
     goTo("http://loterias.caixa.gov.br/wps/portal/loterias/landing/megasena/")
     numId = 2004

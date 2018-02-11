@@ -5,6 +5,7 @@ from WebPoem import *
 
 @WebPoemMain
 def main():
+    WebPoem.title = "sleep"
     driver = GoogleChrome()
     goTo("http://localhost:3000/sleep/index.htm")
     assert search("Me encontre")
