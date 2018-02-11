@@ -7,7 +7,5 @@ from WebPoem import *
 def main():
     driver = GoogleChrome()
     import os
-    goTo("file:///"+os.getcwd()+"/test/sleep/index.htm")
-    sleep(ms(100))
-    assert search("Me encontre") == True
-    
+    goTo("file:///"+os.getcwd()+"/index.htm")
+    assert search("Me encontre")

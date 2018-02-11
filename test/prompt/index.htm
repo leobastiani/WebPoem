@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teste WebPoem</title>
+    <script src="../js/jquery.js"></script>
+    <script>
+        $(document).ready(function() {
+            $(':button').click(function(event) {
+                if(window.prompt('Digite 123') == '123') {
+                    $(document.body).text('Me encontre.')
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+
+<input type="button" value="Clique em mim">
+
+</body>
+</html>

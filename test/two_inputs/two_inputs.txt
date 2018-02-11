@@ -1,4 +1,4 @@
-window_location
+two_inputs
 
 Navegue com o Google Chrome
 
@@ -7,4 +7,9 @@ Navegue com o Google Chrome
 Acesse
     file:///"+os.getcwd()+"/index.htm
 
+Preencha
+    Two Inputs
+        123
+        456
+Clique em Enviar
 Encontre "Me encontre"

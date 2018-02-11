@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teste WebPoem</title>
+    <script src="../js/jquery.js"></script>
+    <script>
+        let count = 0;
+        var k
+        function func(event) {
+            $.get('http://localhost:3000/onkeyup/index.htm', function () {
+                setTimeout(function() {
+                    console.log('fimTimeout');
+                }, 100);
+            })
+        }
+        function end() {
+            console.log('fim:', count);
+        }
+    </script>
+</head>
+<body>
+    <input type="text" placeholder="leonardo" onkeyup="func(event)"><br/>
+    <input type="text" placeholder="leonardo2">
+</body>
+</html>

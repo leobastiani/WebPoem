@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teste WebPoem</title>
+</head>
+<body>
+
+    <div class="form-group">
+        <label>Two Inputs:</label>
+        <input type="text" class="form-control" id="input1">
+        <input type="text" class="form-control" id="input2">
+    </div>
+    <input type="button" value="Enviar">
+
+    <script src="../js/jquery.js"></script>
+    <script>
+        $(':button').click(function(e) {
+            if($('#input1').val() == '123') {
+                if($('#input2').val() == '456') {
+                    $(document.body).append('<span>Me encontre!</span>');
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>

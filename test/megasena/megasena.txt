@@ -1,15 +1,15 @@
 ﻿megasena exemplo
 
-Navegue com o Google Chrome.
+Navegue com o Google Chrome
 
-Acesse:
+Acesse
     http://loterias.caixa.gov.br/wps/portal/loterias/landing/megasena/
 
 {numId = 2004}
-Enquanto numId > 0:
-    Preencha:
-        Ex: 1475:
+Enquanto numId > 2000
+    Preencha
+        Ex: 1475
             {numId}
-    Enviar.
-    Salve.
+    Enviar
+    Salve
     {numId -= 1}

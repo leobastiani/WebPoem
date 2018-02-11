@@ -8,9 +8,8 @@ def main():
     driver = GoogleChrome()
     goTo("http://loterias.caixa.gov.br/wps/portal/loterias/landing/megasena/")
     numId = 2004
-    while numId > 0:
+    while numId > 2000:
         findInput("Ex: 1475").fill(numId)
         send()
         save()
         numId -= 1
-        

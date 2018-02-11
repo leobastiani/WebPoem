@@ -1,4 +1,4 @@
-window_location
+ajax
 
 Navegue com o Google Chrome
 

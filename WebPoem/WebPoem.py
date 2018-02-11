@@ -1,6 +1,6 @@
 #!python3
 #encoding=utf-8
-from __future__ import print_function, division
+from __future__ import print_function, division, absolute_import
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -9,9 +9,17 @@ import selenium.webdriver.chrome.webdriver
 import os
 import sys
 
+DEBUG = sys.flags.debug or False
+def debug(*args):
+    '''funciona como print, mas só é executada se sys.flags.debug == 1'''
+    if not DEBUG:
+        return ;
+    print(*args)
+
 
 class WebPoem:
     driver = None
+    alert = None
     title = ''
 
 def WebPoemMain(main, *args, **kwargs):
@@ -19,9 +27,9 @@ def WebPoemMain(main, *args, **kwargs):
         main()
         print(sys.argv[0], 'OK')
     except Exception as e:
-        raise e
         print(sys.argv[0], 'FAIL')
         pause()
+        raise e
     finally:
         driver.quit()
 
@@ -33,22 +41,29 @@ def pause():
 # navegadores #
 ###############
 def GoogleChrome():
-    WebPoem.driver = selenium.webdriver.chrome.webdriver.WebDriver()
+    from selenium.webdriver.chrome.options import Options
+    chrome_options = Options()
+    chrome_options.add_extension('D:\\Facul\\IC\\WebPoem\\WebPoem\\extension\\dist\\WebPoem.crx')
+
+    WebPoem.driver = selenium.webdriver.chrome.webdriver.WebDriver(chrome_options=chrome_options)
     # define driver como global
     global driver
     driver = WebPoem.driver
+
+    driver.set_page_load_timeout(30)
+    driver.set_script_timeout(10 * 60 * 1000)
     # para acessar nas funções abaixo
     return WebPoem.driver
 
 def goTo(url):
     driver.get(url)
 
+def send_keys(val):
+    if WebPoem.alert:
+        return WebPoem.alert.send_keys(val)
+
 def WebPoemJs(js, *args):
-    try:
-        return driver.execute_script("return " + js, *args);
-    except Exception:
-        execFile('WebPoem')
-        return WebPoemJs(js, *args)
+    return driver.execute_script("return " + js, *args);
 
 
 def find(by, str):
@@ -66,7 +81,7 @@ def isStdName(str):
 def _findElement(str):
     # não faço nada enquanto estou no meio de uma requisição
     # ajax
-    waitAjax()
+    wait()
 
     if isStdName(str):
         # procuro um elemento com esse ID
@@ -93,6 +108,10 @@ def _findElement(str):
     return []
 
 def findElement(str):
+    if WebPoem.alert:
+        if str == 'OK':
+            return WebPoem.alert
+    
     # tentativa pelo simples
     simples = _findElement(str)
     if len(simples) != 0:
@@ -119,16 +138,14 @@ def execFile(fileName):
         driver.execute_script('return '+file.read())
 
 
-def waitAjax():
-    try:
-        obj = driver.execute_async_script('return window.WebPoem.waitAjax(arguments[0])')
-    except Exception:
-        execFile("WebPoem")
-        return waitAjax()
+def wait():
+    driver.execute_async_script('return WebPoem.wait().then(arguments[0]);')
 
 
 count = 1
 def save():
+    wait()
+
     global count
 
     if not os.path.exists('saves'):
@@ -143,6 +160,7 @@ def save():
 
 
 def send():
+    wait()
     if Elements.last is not None:
         Elements.last.send_keys(Keys.ENTER)
 
@@ -203,6 +221,7 @@ def Numbers(str):
 
 
 def search(s):
+    wait()
     text = driver.find_element(By.TAG_NAME, 'body').text
     return text.find(s) != -1
 

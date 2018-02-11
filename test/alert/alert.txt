@@ -1,4 +1,4 @@
-window_location
+copy_me
 
 Navegue com o Google Chrome
 
@@ -6,5 +6,11 @@ Navegue com o Google Chrome
 
 Acesse
     file:///"+os.getcwd()+"/index.htm
+
+Na nova janela
+    Clique em OK
+
+Na nova janela
+    Clique em OK
 
 Encontre "Me encontre"

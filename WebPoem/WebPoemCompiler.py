@@ -1,6 +1,6 @@
 #!python3
 #encoding=utf-8
-from __future__ import print_function, division
+from __future__ import print_function, division, absolute_import
 
 import chardet
 import re
@@ -19,7 +19,15 @@ def WebPoemCompiler(filePath, outputPath):
     debug('WebPoemCompiler')
     debug("filePath:", filePath)
     debug("outputPath:", outputPath)
-    global lines
+
+    #####################
+    # variáveis globais #
+    #####################
+    # conteúdo do arquivo que vamos tratar
+    global content
+    # título do arquivo
+    global title
+    # identação sempre começa em 0
     global identacaoAtual
     identacaoAtual = 0
 
@@ -29,25 +37,23 @@ def WebPoemCompiler(filePath, outputPath):
     debug("fileContentBinary:", fileContentBinary)
     encoding = chardet.detect(fileContentBinary)['encoding']
     debug("encoding:", encoding)
-    fileContent = fileContentBinary.decode(encoding)
-    debug("fileContent:", fileContent)
+    content = fileContentBinary.decode(encoding)
+    debug("content:", content)
     debug('########################')
     debug('# Início da compilação #')
     debug('########################')
     # padroniza as quebras de linhas com \n apenas
-    fileContent = fileContent.replace('\r', '')
-    # linhas juntas, sem quebras excessivas
-    fileContent = re.sub('\n+', '\n', fileContent)
-    lines = fileContent.split('\n')
+    content = content.replace('\r', '')
 
     # a primeira linha é o título
-    titulo = lines.pop(0)
-    debug("titulo:", titulo)
-    debug("lines:", lines)
+    sec = re.match(r'([^\n]+)\n', content, re.S + re.M)
+    title = sec.group(1)
+    content = content[len(sec.group(0)):]
+    debug("title:", title)
 
     # vê a quantidade de espaços ou tabs no início da
     # linha
-    output = ident(Lines())
+    output = ident(consume())
     debug("output:", output)
     output = readFile('py/header.py') + output
     with open(outputPath, 'w', encoding='utf-8') as file:
@@ -58,67 +64,108 @@ def readFile(filePath):
     with open(filePath, 'r', encoding='utf-8') as file:
         return file.read()
 
+# para depurar o conteudo do arquivo
+# jogo ele numa linha só
+def onLine(content):
+    return content.replace('\n', '')
 
-def Lines():
-    line, identacao = getNewLine()
-    if line is None:
-        return ''
+# esta função
+# faz um regex em content
+# e consume
+def _matchContent(regex, content):
+    ret = re.match(regex, content)
+    content = content[len(ret.group()):]
+    return ret, content
+def matchContent(regex):
+    global content
+    ret, content = _matchContent(regex, content)
+    return ret
 
+# consome o conteúdo do arquivo
+def consume():
+    global content
     global StatementAtual
-    StatementAtual = {}
-
     global identacaoAtual
-    if identacao != identacaoAtual:
-        identacaoAtual -= 1
+    debug('content:', onLine(content))
+
+    if content == '':
         return ''
 
-    return Line(line, identacao)
+    ident = len(matchContent(r'^\n*( *)').group(1)) // 4
 
+    if ident < identacaoAtual:
+        return ''
 
-def getNewLine():
-    global lines
+    for fnAndStt in Statements:
+        fn = fnAndStt[0]
+        objs = fnAndStt[1:]
+        debug("fn.__name__:", fn.__name__)
+        for s in objs:
+            debug("s:", s)
 
-    if len(lines) == 0:
-        return None, None
+            # para cada nova tentativa de statement
+            # eu reseto o statement atual
+            StatementAtual = {}
 
-    line = lines.pop(0)
-    identacaoChars = re.match(r'^(\s+)', line)
-    if identacaoChars is None:
-        # quantidade de identacao feita até o momento
-        identacao = 0
-    else:
-        identacaoChars = identacaoChars.group()
-        if identacaoChars[0] == ' ':
-            # é com espaços
-            identacao = int(len(identacaoChars) / 4)
-        else:
-            # é com tabs
-            identacao = len(identacaoChars)
-    # nesse ponto, a identacao deve ser a quantidade de identacao
-    # dada na linha
-    # atualizo a linha
-    line = line.strip()
-    return line, identacao
+            newContent = s.match(content)
+            debug("newContent:", newContent)
+            if isinstance(newContent, str):
+                content = newContent
+                ret = fn()
+                return ret.rstrip()
+        debug('')
 
+def consumeByIdent():
+    global content
+    global identacaoAtual
+    ret = ''
+    while True:
+        match = re.match(r'^\n*( *)([^\n]+)\n', content)
+        ident = len(match.group(1)) // 4
+        if ident < identacaoAtual:
+            return ret
+        # devo consumir
+        line = match.group()
+        ret += line
+        content = content[len(line):]
 
-def goBackLine(line, identacao):
-    global lines
-    lines.insert(0, '\t'*identacao + line)
-
-
+# transforma isso:
+# asd
+# asd
+# nisso:
+#   asd
+#   asd
 def ident(string):
     lines = string.split('\n')
     return '\n'.join(['    '+x for x in lines])
 
+# incrementa a identação atual
+# e consome o arquivo
 def incrIdent():
     global identacaoAtual
     identacaoAtual += 1
-    return identacaoAtual
+    return ident(consume())
+# igual a de cima
+# mas decrementa
+def decrIdent():
+    global identacaoAtual
+    identacaoAtual -= 1
+    return consume()
+
+
+def tokenize(val):
+    if val[0] == '{':
+        # é um python code
+        _, _, ret = parenteses(val)
+        return ret
+    if val[0] in '"\'':
+        return val
+    else:
+        return '"'+val+'"'
 
 ##################################################
 # Funções para serem executadas pelos statements #
 ##################################################
-
 def navegue():
     # Navegue com o Google Chrome
     debug("StatementAtual:", StatementAtual)
@@ -126,56 +173,54 @@ def navegue():
         GoogleChrome = 'GoogleChrome'
     else:
         raise 'Outros navegadores não foram implementados ainda.'
-    return 'driver = '+GoogleChrome+'()\n'+Lines()
+    return 'driver = '+GoogleChrome+'()\n'+consume()
 
 def goTo():
-    line, _ = getNewLine()
-    return 'goTo("'+line+'")\n'+Lines()
+    link = matchContent(r'\n*\s*([^\n]+)').group(1)
+    return 'goTo("'+link+'")\n'+consume()
 
 def preencha():
-    # agora vem o campo
-    lineCampo, identacao = getNewLine()
-    
-    if identacao == identacaoAtual + 1:
-        # nome do campo DOIS_PONTO
-        campo = re.match(r'^(.+):$', lineCampo)
+    ret = []
+    # agora vem os campos
+    # mudo a identação atual
+    # para pegar os campos
+    global identacaoAtual
+    identacaoAtual += 1
+    campoAndValue = consumeByIdent()
+    identacaoAtual -= 1
 
-        if campo is None:
-            raise 'Tratar o caso em que não tem : no fim da linha'
+    campoAndValue = campoAndValue.split('\n')
+    campoAndValue = [x for x in campoAndValue if x != '']
 
-        campo = campo.group(1)
+    def getIdent(line):
+        return len(re.match(r'^\n*( *)', line).group(1)) // 4
 
-        # agora obtenho os valores
-        valores = []
-        # a primeira linha tem que ter
-        lineValor, identacao = getNewLine()
+    idents = [getIdent(x) for x in campoAndValue]
 
-        valores.append(lineValor)
+    def getCampoValues():
+        i = 0
+        limit = len(idents)
+        while i < limit:
+            j = i+1
+            values = []
+            while j < limit and idents[j] > idents[i]:
+                values.append(campoAndValue[j].strip())
+                j+=1
+            yield [campoAndValue[i].strip(), values]
+            i = j+1
+
+    # transforma [x1, x2, ...]
+    # em [(x1, x2), ...]
+    for campo, valores in getCampoValues():
+        debug("campo:", campo)
         debug("valores:", valores)
 
-        while True:
-            # com a mesma identação
-            lineValor, identacao = getNewLine()
-            debug("identacaoAtual:", identacaoAtual)
-            debug("identacao:", identacao)
-            if identacao < identacaoAtual + 2:
-                goBackLine(lineValor, identacao)
-                break
-            valores.append(lineValor)
+        for i, valor in enumerate(valores):
+            valores[i] = tokenize(valor)
 
-        def quotes(v):
-            if v[0] == '{':
-                _, _, v = parenteses(v, '{')
-                return v
-            return '"'+v+'"'
-
-        valoresStr = ', '.join([quotes(v) for v in valores])
-
-        return 'findInput("'+campo+'").fill('+valoresStr+')\n'+Lines()
-
-    # nesse caso, volto a tratar as linhas
-    goBackLine(lineCampo, identacao)
-    return Lines()
+        ret.append('findInput("'+campo+'").fill('+', '.join(valores)+')')
+    # filtra os valores que não possuem nada
+    return '\n'.join(ret) + '\n' + consume()
 
 def acaoToWebPoem(acao):
     if acao == 'CLIQUE':
@@ -185,72 +230,76 @@ def acaoToWebPoem(acao):
 
     return acao
 
+def callFunction():
+    global StatementAtual
+
+    if 'input' in StatementAtual:
+        inp = tokenize(StatementAtual['input'])
+    else:
+        inp = ''
+
+    if 'PAUSE' in StatementAtual:
+        func = 'pause'
+    elif 'DIGITE' in StatementAtual:
+        func = 'send_keys'
+
+    return func+'('+inp+')\n'+consume()
+    
+
 def acao():
     debug("StatementAtual:", StatementAtual)
 
     if StatementAtual['input'] == 'mim':
-        return 'element.click()\n'+Lines()
+        return 'element.click()\n'+consume()
 
-    return 'findElement("'+StatementAtual['input']+'")'+acaoToWebPoem(StatementAtual['ACAO'])+'\n'+Lines()
+    return 'findElement("'+StatementAtual['input']+'")'+acaoToWebPoem(StatementAtual['ACAO'])+'\n'+consume()
 
 def definicao():
     debug("StatementAtual:", StatementAtual)
     input_nome  = StatementAtual['input_nome']
     input_valor = StatementAtual['input_valor']
-    return input_nome+' = findElement("'+input_valor+'")\n'+Lines()
+    return input_nome+' = findElement('+tokenize(input_valor)+')\n'+consume()
 
 def comentario():
     debug("StatementAtual:", StatementAtual)
-    return '#'+StatementAtual['line']+'\n'+Lines()
+    return '#'+StatementAtual['line']+'\n'+consume()
 
-def copyline():
+def pythonCode():
     debug("StatementAtual:", StatementAtual)
-    line = StatementAtual['line']
-    fecha = line[len(line)-1]
-    if fecha != '}':
-        raise 'Não fechei o parênteses'
-    line = line[:len(line)-1]
-    return line+'\n'+Lines()
+    return StatementAtual['input']+'\n'+consume()
 
 def doWhile():
     input_nome = StatementAtual['input']
     acao = acaoToWebPoem(StatementAtual['ACAO'])
 
-    incrIdent()
-    middle = ident(Lines())
-
-    ret = '''while True:
+    return '''while True:
     Clickable = findElement("'''+input_nome+'''")
-'''+middle+'''
+'''+incrIdent()+'''
     if not Clickable.isClickable():
         break
-    Clickable'''+acao+'\n'
-    return ret
+    Clickable'''+acao+'\n'+decrIdent()
 
 def While():
     debug("StatementAtual:", StatementAtual)
 
-    incrIdent()
-
     inp = StatementAtual['input']
     if StatementAtual.get('ENQUANTO') == 'ENQUANTO':
-        return 'while '+inp+':\n'+ident(Lines())
+        return 'while '+inp+':\n'+incrIdent()+'\n'+decrIdent()
 
-    return 'for element in '+inp+':\n'+ident(Lines())
+    return 'for element in '+inp+':\n'+incrIdent()+'\n'+decrIdent()
 
 def encontre():
     debug("StatementAtual:", StatementAtual)
-    return 'assert search("'+StatementAtual['input']+'") == True\n'+Lines()
+    return 'assert search("'+StatementAtual['input']+'")\n'+consume()
 
 def newWindow():
-    incrIdent()
-    return 'with NewWindow():\n'+ident(Lines())
+    return 'with NewWindow():\n'+incrIdent()+'\n'+decrIdent()
 
 def salve():
-    return 'save()\n'+Lines()
+    return 'save()\n'+consume()
 
 def enviar():
-    return 'send()\n'+Lines()
+    return 'send()\n'+consume()
 
 def espere():
     inputTime = StatementAtual['input']
@@ -269,27 +318,11 @@ def espere():
     inputTime = [unidade+'('+time+')' for time, unidade in inputTime]
     inputTime  = '+'.join(inputTime)
 
-    return 'sleep('+inputTime+')\n'+Lines()
+    return 'sleep('+inputTime+')\n'+consume()
 
 ###################
 # Fim das funções #
 ###################
-
-# trata uma linha
-def Line(line, identacao):
-    for fnAndStt in Statements:
-        fn = fnAndStt[0]
-        objs = fnAndStt[1:]
-
-        for s in objs:
-            matched = s.match(line)
-            debug("matched:", matched)
-            if matched:
-                ret = fn()
-                return ret
-
-identacaoAtual = 0
-StatementAtual = {}
 
 class Statement:
     termos = {
@@ -310,10 +343,12 @@ class Statement:
         'NOVA': ['nova'],
         'JANELA': ['janela'],
         'ESPERE': ['espere'],
+        'PAUSE': ['pause'],
         'ENVIAR': ['enviar'],
         'ENCONTRE': ['encontre', 'encontrar'],
         'SALVE': ['salve'],
         'CONSEGUIR': ['puder'],
+        'DIGITE': ['digite'],
         'NAVEGADOR': {
             'Chrome': ['Google Chrome', 'Chrome'],
             'IE': ['Internet Explorer'],
@@ -322,176 +357,176 @@ class Statement:
         ':': [':'],
         '#': ['#'],
         '{': [r'\{'],
+        '\n': [r'\n'],
     }
 
     def __init__(self, *statements):
         self.statements = statements
 
-    def match(self, line):
-
-        debug("line:", line)
+    def match(self, content):
+        debug("content:", onLine(content))
         debug("self.statements:", self.statements)
 
         for s in self.statements:
-            line = StatementMatch(s, line)
-            if line is False:
-                return False
-            line = line.strip()
-        return True
+            content = Statement.matchRegex(s, content)
+            if content is False:
+                return None
+            # remove os espaços do início da string
+            # isso não prejudica a identação
+            # pq antes da identação tem um \n
+            content = re.sub(r'^ +', '', content)
+        return content
     
+    def __str__(self):
+        return str(self.statements)
 
-def parenteses(line, abre='('):
-    if   abre == '(': fecha = ')'
-    elif abre == '{': fecha = '}'
+    @staticmethod
+    def matchRegex(statement, content):
+        if content == '':
+            return False
 
-    i = 0
-    while line[i] != abre:
-        i += 1
-    start = i
-    abertos = 1
-    while True:
-        i+=1
-        if line[i] == abre:
-            abertos += 1
-        elif line[i] == fecha:
-            abertos -= 1
-            if abertos == 0:
-                break
-    return start, i, line[start+1:i]
+        termos = Statement.termos.get(statement)
+        debug('')
+        debug("statement:", repr(statement))
+        debug("termos:", repr(termos))
+        debug("content:", repr(onLine(content)))
 
-def StatementMatch(statement, line):
-    if line == '':
-        return line
+        if termos is None:
+            # retorna a própria linha
+            if statement.startswith('input'):
+                if content[0] in '${[("\'':
+                    # é uma entrada igual o seletor
+                    # do jQuery
+                    if content[0] == '$':
+                        # começa com $
+                        content = content[1:]
+                    # obtém o termo entre parênteses
+                    startParenteses, endParenteses, _ = parenteses(content)
 
-    termos = Statement.termos.get(statement)
-    debug('')
-    debug("statement:", '"'+str(statement)+'"')
-    debug("termos:", '"'+str(termos)+'"')
-    debug("line:", '"'+str(line)+'"')
+                    if startParenteses != 0:
+                        raise 'Erro na seleção de $'
 
-    if termos is None:
-        # retorna a própria linha
-        if statement.startswith('input'):
-            if line[0] == '$' or line[0] == '(':
-                # é uma entrada igual o seletor
-                # do jQuery
-                if line[0] == '$':
-                    # começa com $
-                    line = line[1:]
-                # obtém o termo entre parênteses
-                startParenteses, endParenteses, _ = parenteses(line)
+                    ret = content[startParenteses+1:endParenteses]
+                    content = content[endParenteses+1:]
+                    debug("ret:", ret)
+                    debug("content:", onLine(content))
+                else:
+                    # caso genérico
+                    ret, content = _matchContent(r'\n*([^\n]+)', content)
+                    ret = ret.group(1)
 
-                if startParenteses != 0:
-                    raise 'Erro na seleção de $'
+            StatementAtual[statement] = ret
+            return content
 
-                ret = line[startParenteses+2:endParenteses-1]
-                line = line[endParenteses+1:]
-                debug("ret:", ret)
-                debug("line:", line)
+        # padroniza tudo
+        if not isinstance(termos, dict):
+            # de list
+            # para dict
+            aux = {}
+            aux[statement] = termos
+            termos = aux
 
-            elif line[0] == '"' or line[0] == '\'':
-                # a linha começa com aspas
-                startChar = line[0]
-                start = 1
-                end = start + 1
-                ret = None
-                # percorre por end
-                while end < len(line):
-                    if line[end] == startChar:
-                        # encontrei
-                        ret = line[start:end]
-                        line = line[end+1:]
+        for t in termos:
+            debug("t:", t)
+            matches = termos[t]
+            debug("matches:", matches)
+            for m in matches:
+                match = re.match(r'^'+m, content, flags=re.IGNORECASE)
+                debug("match:", match)
+                if match is None:
+                    continue
+                match = match.group()
+                StatementAtual[statement] = t
+                debug("match:", match)
+                content = content[len(match):]
+                return content
+
+        return False
+
+
+def parenteses(line):
+    chars = [
+        ('(', ')'),
+        ('[', ']'),
+        ('{', '}'),
+        ('"', '"'),
+        ("'", "'"),
+    ]
+
+    for abre, fecha in chars:
+        if line[0] == abre:
+            i = 0
+            abertos = 1
+            while True:
+                i+=1
+                if line[i] == '\\':
+                    i+=1
+                # o fecha tem que vir antes
+                # pq no caso
+                # das aspas
+                # eu eu tenho que tratar
+                # que estou fechando
+                elif line[i] == fecha:
+                    abertos -= 1
+                    if abertos == 0:
                         break
-                    elif line[end] == '\\':
-                        end += 1
-                    end += 1
-
-                if ret is None:
-                    raise 'O par das aspas não foi encontrado.'
-
-            else:
-                # caso genérico
-                ret = line[:len(line)-1]
-                line = line[len(line)-1:]
-
-        elif statement.startswith('line'):
-            ret = line
-
-        StatementAtual[statement] = ret
-        return line
-
-    # padroniza tudo
-    if not isinstance(termos, dict):
-        # de list
-        # para dict
-        aux = {}
-        aux[statement] = termos
-        termos = aux
-
-    for t in termos:
-        debug("t:", t)
-        matches = termos[t]
-        debug("matches:", matches)
-        for m in matches:
-            match = re.match(r'^'+m, line, flags=re.IGNORECASE)
-            debug("match:", match)
-            if match is None:
-                continue
-            match = match.group()
-            StatementAtual[statement] = t
-            debug("match:", match)
-            line = line[len(match):]
-            return line
-
-    return False
-
+                elif line[i] == abre:
+                    abertos += 1
+            return 0, i, line[1:i]
 
 Statements = [
+    # Statements não é um dict
+    # porque eu preciso seguir essa ordem
+    # na hora de testar os statements
+    # por isso ele é uma lista
+    # e segue esse padrão
+    # [ FuncaoReferenteParaTratar, ...listaDeStatements]
     
     # Navegue com o Google Chrome
     [ navegue,
-        Statement('NAVEGUE', 'PREP', 'ARTIGO', 'NAVEGADOR', '.'),
+        Statement('NAVEGUE', 'PREP', 'ARTIGO', 'NAVEGADOR'),
     ],
     [ goTo,
-        Statement('ACESSE', ':'),
+        Statement('ACESSE'),
     ],
     [ newWindow,
-        Statement('NO', 'NOVA', 'JANELA', ':'),
+        Statement('NO', 'NOVA', 'JANELA'),
     ],
     [ salve,
-        Statement('SALVE', '.'),
+        Statement('SALVE'),
+    ],
+    [ callFunction,
+        Statement('DIGITE', 'input'),
+        Statement('PAUSE'),
     ],
     [ encontre,
-        Statement('ENCONTRE', 'input', '.'),
+        Statement('ENCONTRE', 'input'),
     ],
     [ doWhile,
-        Statement('ENQUANTO', 'CONSEGUIR', 'ACAO', 'NO', 'input', ':'),
+        Statement('ENQUANTO', 'CONSEGUIR', 'ACAO', 'NO', 'input'),
     ],
     [ While,
-        Statement('ENQUANTO', 'input', ':'),
-        Statement('PARA CADA', 'input', ':'),
+        Statement('ENQUANTO', 'input'),
+        Statement('PARA CADA', 'input'),
     ],
     [ preencha,
-        Statement('PREENCHA', ':'),
+        Statement('PREENCHA'),
     ],
     [ espere,
-        Statement('ESPERE', 'input', '.'),
+        Statement('ESPERE', 'input'),
     ],
     [ enviar,
-        Statement('ENVIAR', '.'),
+        Statement('ENVIAR'),
     ],
     [ acao,
         Statement('ACAO', 'NO', 'input'),
     ],
-    [ comentario,
-        Statement('#', 'line'),
-    ],
-    [ copyline,
-        Statement('{', 'line'),
-    ],
     [ definicao,
         Statement('input_valor', 'É', 'ARTIGO', 'input_nome'),
-    ]
+    ],
+    [ pythonCode,
+        Statement('input'),
+    ],
     
 ]
 

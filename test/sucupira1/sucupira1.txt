@@ -1,26 +1,26 @@
 ﻿sucupira exemplo 1
 
-Navegue com o Google Chrome.
+Navegue com o Google Chrome
 
-Acesse:
+Acesse
     https://sucupira.capes.gov.br/sucupira/public/consultas/coleta/programa/listaPrograma.jsf
 
-Preencha:
-    Instituição de Ensino Superior:
-        UNIVERSIDADE ESTADUAL DE CAMPINAS
+Preencha
+    Instituição de Ensino Superior
+        33003017
 
-Clique em 33003017 UNIVERSIDADE ESTADUAL DE CAMPINAS (UNICAMP).
+Clique em 33003017 UNIVERSIDADE ESTADUAL DE CAMPINAS (UNICAMP)
 
-Preencha:
-    Programa:
+Preencha
+    Programa
         CIÊNCIA DA COMPUTAÇÃO
 
-Clique em Consultar.
+Clique em Consultar
 
-$('.glyphicon-search') é uma Lupa.
+$('.glyphicon-search') é uma Lupa
 
-Enquanto puder clicar em Próxima:
-    Para cada Lupa[1:]:
-        Clique em mim.
-        Na nova janela:
-            Salve.
+Enquanto puder clicar em Próxima
+    Para cada Lupa[1:]
+        Clique em mim
+        Na nova janela
+            Salve

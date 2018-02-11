@@ -1,11 +1,15 @@
 # WebPoem
-jquery.js
+test/js/jquery.js
 .idea
 debug.log
 dir(driver).txt
 log.txt
 logs.txt
 saves
+extension/unpacked/WebPoem.js
+extension/unpacked/WebPoem.unwrapped.js
+extension/unpacked/dist
+bin
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

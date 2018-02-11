@@ -1,10 +1,10 @@
 window_load
 
-Navegue com o Google Chrome.
+Navegue com o Google Chrome
 
 {import os}
 
-Acesse:
-    file:///"+os.getcwd()+"/test/window_load/index.htm
+Acesse
+    file:///"+os.getcwd()+"/index.htm
 
-Encontre "Me encontre".
+Encontre "Me encontre"

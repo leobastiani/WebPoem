@@ -8,4 +8,8 @@ def main():
     driver = GoogleChrome()
     import os
     goTo("file:///"+os.getcwd()+"/index.htm")
+    findElement("Clique em mim").click()
+    with NewWindow():
+        send_keys("123")
+        findElement("OK").click()
     assert search("Me encontre")

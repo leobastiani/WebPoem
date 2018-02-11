@@ -1,0 +1,13 @@
+{
+    "manifest_version": 2,
+    "content_scripts": [ {
+        "exclude_globs":    [  ],
+        "include_globs":    [ "*" ],
+        "run_at": "document_start",
+        "js":               [ "WebPoem.js" ],
+        "matches":          ["http://*/*", "https://*/*", "file:///*"]
+    } ],
+    "name":         "WebPoem",
+    "description":  "Se declare para seu navegador.",
+    "version":      "1"
+}
