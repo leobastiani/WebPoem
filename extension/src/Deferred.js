@@ -7,4 +7,4 @@ class Deferred {
     }
 }
 
-module.exports.Deferred = Deferred;
+module.exports = Deferred;

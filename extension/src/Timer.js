@@ -1,7 +1,7 @@
 // solução de
 // https://stackoverflow.com/questions/858619/viewing-all-the-timeouts-intervals-in-javascript
 
-let { Deferred } = require('./Deferred')
+let Deferred = require('./Deferred')
 
 let Config = require('./Config')
 
@@ -21,10 +21,6 @@ let _clearInterval = window.clearInterval;
 let _clearTimeout = window.clearTimeout;
 
 let timers = {};
-
-let ret = function () {
-    return Object.values(timers);
-}
 
 window.setTimeout = function(fn, delay) {
     let id = _setTimeout(function() {
@@ -73,4 +69,6 @@ function removeTimer(id) {
     }
 }
 
-module.exports = ret;
+module.exports = function () {
+    return Object.values(timers);
+}

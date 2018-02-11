@@ -26,9 +26,9 @@ class WebPoem:
 def WebPoemMain(main, *args, **kwargs):
     try:
         main()
-        print(sys.argv[0], 'OK')
+        print(WebPoem.title, 'OK')
     except Exception as e:
-        print(sys.argv[0], 'FAIL')
+        print(WebPoem.title, 'FAIL')
         pause()
         raise e
     finally:

@@ -50,10 +50,11 @@ def WebPoemCompiler(filePath, outputPath):
     title = sec.group(1)
     content = content[len(sec.group(0)):]
     debug("title:", title)
+    output = 'WebPoem.title = '+tokenize(title)+'\n'
 
     # vê a quantidade de espaços ou tabs no início da
     # linha
-    output = ident(consume())
+    output = ident(output+consume())
     debug("output:", output)
     output = readFile('py/header.py') + output
     with open(outputPath, 'w', encoding='utf-8') as file:

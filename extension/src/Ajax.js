@@ -1,4 +1,4 @@
-let { Deferred } = require('./Deferred')
+let Deferred = require('./Deferred')
 
 let _XMLHttpRequest = window.XMLHttpRequest
 let xhrs = []
