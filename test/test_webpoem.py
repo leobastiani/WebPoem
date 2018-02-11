@@ -43,7 +43,7 @@ try:
             #     0             0       ==        1
             #     0             1       ==        0
             #     1             0       ==        0
-            #     1             0       ==        0
+            #     1             1       ==        0
             if not args.exec_only and not args.no_compile:
                 WebPoemCompiler(str(src), str(dest))
 
