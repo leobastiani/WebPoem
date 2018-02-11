@@ -64,14 +64,7 @@ try:
             # agora eu verifico se eu quero executar
             # seguindo a msma lógica do "se quero compilar"
             if not args.compile_only and not args.no_exec:
-                # solução de:
-                # https://stackoverflow.com/questions/67631/how-to-import-a-module-given-the-full-path
-                shutil.copy(str(dest), cwd)
-                infile = str(dest.absolute())
-                basename = os.path.basename(infile)
-                basename_without_extension = basename[:-3]
-                imp.load_source(basename_without_extension, infile)
-                os.remove(basename)
+                WebPoemExec(str(dest))
             
         # chamo essa função que acabei de criar
         testcase = unittest.FunctionTestCase(
