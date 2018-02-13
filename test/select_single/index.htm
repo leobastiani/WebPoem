@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teste WebPoem</title>
+</head>
+<body>
+
+    <div class="form-group">
+        <label>Selecione 456:</label>
+        <select name="select_test" id="select_test">
+            <option value="123">123</option>
+            <option value="456">456</option>
+            <option value="789">789</option>
+        </select>
+    </div>
+    <input type="button" value="Enviar"><br/>
+
+    <script src="../js/jquery.js"></script>
+    <script>
+        $(':button').click(function(e) {
+            if($('select').val() == '456') {
+                $(document.body).append('<span>Me encontre!</span>');
+            }
+        });
+    </script>
+
+</body>
+</html>

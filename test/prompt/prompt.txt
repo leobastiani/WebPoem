@@ -3,7 +3,7 @@ prompt
 Navegue com o Google Chrome
 
 Acesse
-    http://localhost:3000/prompt/index.htm
+    http://localhost:3000/"+WebPoem.title+"/index.htm
 
 Clique em Clique em mim
 Na nova janela

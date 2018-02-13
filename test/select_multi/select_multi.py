@@ -5,11 +5,9 @@ from WebPoem import *
 
 @WebPoemMain
 def main():
-    WebPoem.title = "prompt"
+    WebPoem.title = "select_multi"
     driver = GoogleChrome()
     goTo("http://localhost:3000/"+WebPoem.title+"/index.htm")
-    findElement("Clique em mim").click()
-    with NewWindow():
-        send_keys("123")
-        findElement("OK").click()
+    findInput("Selecione todos").select("123", "456", "789")
+    findElement("Enviar").click()
     assert search("Me encontre")

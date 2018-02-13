@@ -1,8 +1,16 @@
-window_load
+select_multi
 
 Navegue com o Google Chrome
 
 Acesse
     http://localhost:3000/"+WebPoem.title+"/index.htm
+
+Selecione
+    Selecione todos
+        123
+        456
+        789
+
+Clique em Enviar
 
 Encontre "Me encontre"

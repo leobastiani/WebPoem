@@ -6,12 +6,13 @@ let Deferred = require('./Deferred')
 let Config = require('./Config')
 
 class TimerDeferred extends Deferred {
-constructor(id, delay) {
-    super();
-    this.id = id;
-    this.delay = delay;
+    constructor(id, delay) {
+        super();
+        this.id = id;
+        this.delay = delay;
+    }
 }
-}
+
 class TimeoutDeferred extends TimerDeferred { }
 class IntervalDeferred extends TimerDeferred { }
 

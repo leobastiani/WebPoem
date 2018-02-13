@@ -9,6 +9,7 @@ import selenium.webdriver.chrome.webdriver
 from selenium.common.exceptions import TimeoutException
 import os
 import sys
+import traceback
 
 DEBUG = sys.flags.debug or False
 def debug(*args):
@@ -28,9 +29,9 @@ def WebPoemMain(main, *args, **kwargs):
         main()
         print(WebPoem.title, 'OK')
     except Exception as e:
+        traceback.print_exc()
         print(WebPoem.title, 'FAIL')
         pause()
-        raise e
     finally:
         driver.quit()
 
@@ -127,7 +128,7 @@ def findElement(str):
     # primeiro, vamos tratar esse texto
     return Elements(WebPoemJs("window.WebPoem.findElement('" + str + "')"))
 
-def findInput(str):
+def findInput(str, func='findInput'):
     # tentativa pelo simples
     simples = _findElement(str)
     if len(simples) != 0:
@@ -136,7 +137,10 @@ def findInput(str):
     # agora é a minha própria tentativa
     # procura um elemento que o tenha esse texto
     # primeiro, vamos tratar esse texto
-    return Elements(WebPoemJs("window.WebPoem.findInput(window.WebPoem.findElement('" + str + "'))"))
+    return Elements(WebPoemJs("window.WebPoem."+func+"(window.WebPoem.findElement('" + str + "'))"))
+
+def findSelect(str):
+    return findInput(str, 'findSelect')
 
 def execFile(fileName):
     with open('js/'+fileName+'.js', 'r', encoding='utf-8') as file:

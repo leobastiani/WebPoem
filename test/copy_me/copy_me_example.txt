@@ -1,8 +1,8 @@
 copy_me
 
-Navegue com o Google Chrome.
+Navegue com o Google Chrome
 
-Acesse:
-    http://localhost:3000/copy_me/index.htm
+Acesse
+    http://localhost:3000/"+WebPoem.title+"/index.htm
 
-Encontre "Me encontre".
+Encontre "Me encontre"

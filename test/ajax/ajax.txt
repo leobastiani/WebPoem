@@ -3,6 +3,6 @@ ajax
 Navegue com o Google Chrome
 
 Acesse
-    http://localhost:3000/ajax/index.htm
+    http://localhost:3000/"+WebPoem.title+"/index.htm
 
 Encontre "Me encontre"

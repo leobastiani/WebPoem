@@ -2,7 +2,9 @@
 #encoding=utf-8
 from __future__ import print_function, division, absolute_import
 from selenium.webdriver.common.keys import Keys
-
+from selenium.webdriver.support.ui import Select
+from selenium.webdriver import ActionChains
+from WebPoem import WebPoem
 
 class Elements:
     last = None
@@ -44,6 +46,30 @@ class Elements:
 
         return Elements(res)
 
+    def select(self, *vals):
+        for e in self.els:
+            if e.tag_name == 'select':
+                # caso o parametro seja um número
+                # ou outro tipo de objeto
+                select = Select(e)
+                Elements.last = e
+                # seleciona o primeiro
+                val = str(vals[0])
+                select.select_by_visible_text(val)
+                
+                if len(vals) == 1:
+                    return Elements(e)
+
+                # tem mais de um vals
+                # seleciona os demais com control
+                act = ActionChains(WebPoem.driver)
+                act.key_down(Keys.CONTROL, e)
+                for i, val in enumerate(vals[1:]):
+                    val = str(val)
+                    act.click(select.select_by_visible_text(val))
+
+                return Elements(e)
+
     def click(self):
         if len(self.els) == 0:
             return False
@@ -65,6 +91,9 @@ class Elements:
 
     def __getitem__(self, key):
         return self.els[key]
+
+    def __str__(self):
+        return str(self.els)
 
     def text(self):
         return [x.text for x in self.els]

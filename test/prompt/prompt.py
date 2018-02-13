@@ -7,7 +7,7 @@ from WebPoem import *
 def main():
     WebPoem.title = "prompt"
     driver = GoogleChrome()
-    goTo("http://localhost:3000/prompt/index.htm")
+    goTo("http://localhost:3000/"+WebPoem.title+"/index.htm")
     findElement("Clique em mim").click()
     with NewWindow():
         send_keys("123")

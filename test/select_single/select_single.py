@@ -5,7 +5,9 @@ from WebPoem import *
 
 @WebPoemMain
 def main():
-    WebPoem.title = "sleep"
+    WebPoem.title = "select_single"
     driver = GoogleChrome()
-    goTo("http://localhost:3000/sleep/index.htm")
+    goTo("http://localhost:3000/"+WebPoem.title+"/index.htm")
+    findInput("Selecione 456").select("456")
+    findElement("Enviar").click()
     assert search("Me encontre")

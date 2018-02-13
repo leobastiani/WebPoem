@@ -7,7 +7,7 @@ from WebPoem import *
 def main():
     WebPoem.title = "two_inputs"
     driver = GoogleChrome()
-    goTo("http://localhost:3000/two_inputs/index.htm")
+    goTo("http://localhost:3000/"+WebPoem.title+"/index.htm")
     findInput("Two Inputs").fill("123", "456")
     findElement("Enviar").click()
     assert search("Me encontre")

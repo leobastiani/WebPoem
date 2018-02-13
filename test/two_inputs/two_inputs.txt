@@ -3,7 +3,7 @@ two_inputs
 Navegue com o Google Chrome
 
 Acesse
-    http://localhost:3000/two_inputs/index.htm
+    http://localhost:3000/"+WebPoem.title+"/index.htm
 
 Preencha
     Two Inputs

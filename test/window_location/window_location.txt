@@ -5,6 +5,6 @@ Navegue com o Google Chrome
 {import os}
 
 Acesse
-    http://localhost:3000/window_location/index.htm
+    http://localhost:3000/"+WebPoem.title+"/index.htm
 
 Encontre "Me encontre"

@@ -7,5 +7,5 @@ from WebPoem import *
 def main():
     WebPoem.title = "window_load"
     driver = GoogleChrome()
-    goTo("http://localhost:3000/window_load/index.htm")
+    goTo("http://localhost:3000/"+WebPoem.title+"/index.htm")
     assert search("Me encontre")

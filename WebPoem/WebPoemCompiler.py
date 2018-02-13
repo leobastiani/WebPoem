@@ -186,6 +186,16 @@ def preencha():
     # mudo a identação atual
     # para pegar os campos
     global identacaoAtual
+
+    # as funções que estarão
+    # no arquivo compilado
+    if 'PREENCHA' in StatementAtual:
+        func = 'findInput'
+        fill = 'fill'
+    elif 'SELECIONE' in StatementAtual:
+        func = 'findInput'
+        fill = 'select'
+
     identacaoAtual += 1
     campoAndValue = consumeByIdent()
     identacaoAtual -= 1
@@ -219,7 +229,7 @@ def preencha():
         for i, valor in enumerate(valores):
             valores[i] = tokenize(valor)
 
-        ret.append('findInput("'+campo+'").fill('+', '.join(valores)+')')
+        ret.append(func+'("'+campo+'").'+fill+'('+', '.join(valores)+')')
     # filtra os valores que não possuem nada
     return '\n'.join(ret) + '\n' + consume()
 
@@ -331,7 +341,8 @@ class Statement:
         # faltam um \b no final
         'NAVEGUE': ['navegue'],
         'ACESSE': ['acesse'],
-        'PREENCHA': ['preencha'],
+        'PREENCHA': ['preencha', 'preencher'],
+        'SELECIONE': ['selecione', 'selecionar'],
         'PREP': ['com'],
         'ARTIGO': ['o', 'a', 'uma', 'um'],
         'ACAO': {
@@ -512,6 +523,7 @@ Statements = [
     ],
     [ preencha,
         Statement('PREENCHA'),
+        Statement('SELECIONE'),
     ],
     [ espere,
         Statement('ESPERE', 'input'),
