@@ -1,0 +1,10 @@
+navegacao_continua
+
+Modo de navegação contínua
+
+Navegue com o Google Chrome
+
+Acesse
+    http://localhost:3000/"+WebPoem.title+"/index.htm
+
+Encontre "Me encontre"

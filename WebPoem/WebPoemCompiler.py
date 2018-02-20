@@ -59,6 +59,7 @@ def WebPoemCompiler(filePath, outputPath):
     output = readFile('py/header.py') + output
     with open(outputPath, 'w', encoding='utf-8') as file:
         file.write(output)
+    return title
 
 
 def readFile(filePath):
@@ -301,10 +302,20 @@ def While():
 
 def encontre():
     debug("StatementAtual:", StatementAtual)
-    return 'assert search("'+StatementAtual['input']+'")\n'+consume()
+    if 'NÃO' in StatementAtual:
+        nao = 'not '
+    else:
+        nao = ''
+    return 'assert '+nao+'search("'+StatementAtual['input']+'")\n'+consume()
 
 def newWindow():
     return 'with NewWindow():\n'+incrIdent()+'\n'+decrIdent()
+
+def keepData():
+    return 'WebPoem.keepData()\n'+consume()
+
+def openInNewWindow():
+    return 'with OpenInNewWindow(findElement("'+StatementAtual['input']+'")):\n'+incrIdent()+'\n'+decrIdent()
 
 def salve():
     return 'save()\n'+consume()
@@ -339,11 +350,12 @@ class Statement:
     termos = {
         # todos são expressões regulares
         # faltam um \b no final
-        'NAVEGUE': ['navegue'],
+        'NAVEGUE': ['navegue', 'navegação'],
         'ACESSE': ['acesse'],
+        'NÃO': ['NÃO', 'NAO'],
         'PREENCHA': ['preencha', 'preencher'],
         'SELECIONE': ['selecione', 'selecionar'],
-        'PREP': ['com'],
+        'PREP': ['com', 'de'],
         'ARTIGO': ['o', 'a', 'uma', 'um'],
         'ACAO': {
             'CLIQUE': ['clique', 'clicar'],
@@ -352,8 +364,11 @@ class Statement:
         'É': ['é'],
         'ENQUANTO': ['enquanto'],
         'PARA CADA': ['para cada'],
+        'MODO': ['modo'],
+        'CONTINUA': ['contínua'],
         'NOVA': ['nova'],
-        'JANELA': ['janela'],
+        'ABRA': ['abra'],
+        'JANELA': ['janela', 'aba'],
         'ESPERE': ['espere'],
         'PAUSE': ['pause'],
         'ENVIAR': ['enviar'],
@@ -501,8 +516,14 @@ Statements = [
     [ goTo,
         Statement('ACESSE'),
     ],
+    [ openInNewWindow,
+        Statement('ABRA', 'NO', 'NOVA', 'JANELA', 'input'),
+    ],
     [ newWindow,
         Statement('NO', 'NOVA', 'JANELA'),
+    ],
+    [ keepData,
+        Statement('MODO', 'PREP', 'NAVEGUE', 'CONTINUA'),
     ],
     [ salve,
         Statement('SALVE'),
@@ -512,6 +533,7 @@ Statements = [
         Statement('PAUSE'),
     ],
     [ encontre,
+        Statement('NÃO', 'ENCONTRE', 'input'),
         Statement('ENCONTRE', 'input'),
     ],
     [ doWhile,
@@ -559,10 +581,26 @@ def addBarraB(termos):
                 # é uma lista
                 newList = []
                 for word in l:
+                    # bypass do acento
+                    # solução
+                    # trasforma
+                    # exêmplo em ex[eê]mplo
+                    for semAcento in acentos:
+                        chsAcentos = acentos[semAcento]
+                        for ch in chsAcentos:
+                            word = word.replace(ch, '['+semAcento+ch+']')
+                    # fim dele
                     newList.append(word + r'\b')
 
                 termos[termo] = newList
 
+acentos = {
+    'a': 'áàâã',
+    'e': 'éê',
+    'i': 'íî',
+    'o': 'õôõ',
+    'u': 'úü',
+    'c': 'ç',
+}
 
 addBarraB(Statement.termos)
-

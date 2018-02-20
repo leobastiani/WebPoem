@@ -86,6 +86,10 @@ class Elements:
 
         return False
 
+    def send_keys(self, *args, **kwargs):
+        for e in self.els:
+            e.send_keys(*args, **kwargs)
+
     def __len__(self):
         return len(self.els)
 

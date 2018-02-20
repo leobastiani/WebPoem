@@ -1,0 +1,12 @@
+open_new_window
+
+Navegue com o Google Chrome
+
+Acesse
+    http://localhost:3000/"+WebPoem.title+"/index.htm
+
+Abra em nova aba link1
+    Encontre Me Encontre
+
+Abra em nova aba link2
+    Encontre Me Encontre

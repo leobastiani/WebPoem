@@ -45,7 +45,9 @@ try:
             #     1             0       ==        0
             #     1             1       ==        0
             if not args.exec_only and not args.no_compile:
-                WebPoemCompiler(str(src), str(dest))
+                title = WebPoemCompiler(str(src), str(dest))
+            else:
+                title = name
 
             if args.redifine:
                 # quando estou redefinindo
@@ -65,6 +67,9 @@ try:
             # seguindo a msma lógica do "se quero compilar"
             if not args.compile_only and not args.no_exec:
                 WebPoemExec(str(dest))
+
+            if os.path.exists(title):
+                shutil.rmtree(title)
             
         # chamo essa função que acabei de criar
         testcase = unittest.FunctionTestCase(

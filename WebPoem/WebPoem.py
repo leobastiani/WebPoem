@@ -7,6 +7,7 @@ from selenium.webdriver.common.by import By
 
 import selenium.webdriver.chrome.webdriver
 from selenium.common.exceptions import TimeoutException
+from pathlib import Path
 import os
 import sys
 import traceback
@@ -22,10 +23,20 @@ def debug(*args):
 class WebPoem:
     driver = None
     alert = None
-    title = ''
+    title = 'saves'
+
+    # definições
+    KEEP_DATA = False
+
+    @staticmethod
+    def keepData():
+        WebPoem.KEEP_DATA = True
 
 def WebPoemMain(main, *args, **kwargs):
     try:
+        # configurações iniciais
+        WebPoem.KEEP_DATA = False
+
         main()
         print(WebPoem.title, 'OK')
     except Exception as e:
@@ -46,6 +57,8 @@ def GoogleChrome():
     from selenium.webdriver.chrome.options import Options
     options = Options()
     options.add_extension('./extension/dist/WebPoem.crx')
+    if WebPoem.KEEP_DATA:
+        options.add_argument('user-data-dir='+WebPoem.title+'/user-data')
 
     WebPoem.driver = selenium.webdriver.chrome.webdriver.WebDriver(chrome_options=options)
     # define driver como global
@@ -157,13 +170,12 @@ def save():
 
     global count
 
-    if not os.path.exists('saves'):
-        os.mkdir('saves')
+    mkdir(WebPoem.title+'/saves')
 
-    while os.path.exists('saves/'+str(count)+'.txt'):
+    while os.path.exists(WebPoem.title+'/saves/'+str(count)+'.txt'):
         count += 1
 
-    with open('saves/'+str(count)+'.txt', 'w', encoding='utf-8') as file:
+    with open(WebPoem.title+'/saves/'+str(count)+'.txt', 'w', encoding='utf-8') as file:
         file.write(driver.page_source)
     count += 1
 
@@ -173,6 +185,14 @@ def send():
     if Elements.last is not None:
         Elements.last.send_keys(Keys.ENTER)
 
+def mkdir(path):
+    path = Path(path)
+    sequence = list(reversed(list(path.parents)))[1:]
+    for p in sequence:
+        if not os.path.exists(str(p)):
+            os.mkdir(str(p))
+    if not os.path.exists(str(path)):
+            os.mkdir(str(path))
 
 #####################
 # funções de tempo: #
@@ -232,9 +252,9 @@ def Numbers(str):
 def search(s):
     wait()
     text = driver.find_element(By.TAG_NAME, 'body').text
-    return text.find(s) != -1
+    return text.lower().find(s.lower()) != -1
 
 import re
 from WebPoem.Elements import Elements
-from WebPoem.NewWindow import NewWindow
+from WebPoem.NewWindow import *
 from selenium.webdriver.common.keys import Keys
