@@ -14,16 +14,15 @@ sudo mv -f ~/chromedriver /usr/local/bin/chromedriver
 sudo chown root:root /usr/local/bin/chromedriver
 sudo chmod 0755 /usr/local/bin/chromedriver
 # instalar o selenium
-sudo apt-get -y install python3-pip
-pip3 install selenium
+sudo apt-get -y install python-pip
+pip install selenium
 # instalar as dependências do projeto
-pip3 install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 ### Exemplo de uso:
 ```sh
 # executando o caso de teste da plataforma sucupira
-cp test/sucupira1/sucupira1.txt .
-python3 WebPoem.py sucupira1.txt sucupira1.py
-python3 sucupira1.py
+python WebPoem.py test/sucupira1/sucupira1.txt -o sucupira1.py
+python sucupira1.py
 ```
