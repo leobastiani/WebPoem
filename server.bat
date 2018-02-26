@@ -1,5 +1,5 @@
 @ECHO OFF
 
 pushd test
-php -S localhost:3000
+python -m http.server 3000 --bind 127.0.0.1
 popd
