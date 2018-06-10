@@ -19,6 +19,9 @@ try:
     parser.add_argument('--redifine', '-r', action='store_true',
         help='redefine todos os arquivos correct.py que servem para comparar o resultado gerado pelo compilador'
     )
+    parser.add_argument('--all', '-a', action='store_true',
+        help='executa todos os tipos de testes, inclui os testes não-locais'
+    )
 
     argv = os.environ['WEBPOEM'] if 'WEBPOEM' in os.environ else ''
     args = parser.parse_args(argv.split())
@@ -35,8 +38,11 @@ try:
             # copia o arquivo para a raiz
             if not src.exists():
                 return
-
             print('Testing:', src)
+            # quero saber
+            # se esse teste
+            # é local ou não
+            isLocalTest = index.exists()
 
             # para saber se vai compilar, segue a tabela
             # exec_only    no_compile       vai_compilar
@@ -66,7 +72,8 @@ try:
             # agora eu verifico se eu quero executar
             # seguindo a msma lógica do "se quero compilar"
             if not args.compile_only and not args.no_exec:
-                WebPoemExec(str(dest))
+                if isLocalTest or args.all:
+                    WebPoemExec(str(dest))
 
             if os.path.exists(title):
                 shutil.rmtree(title)

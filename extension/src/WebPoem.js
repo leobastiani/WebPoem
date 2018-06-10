@@ -36,6 +36,11 @@ let WebPoem = {
                 t.delay <= Config.MAX_DELAY
             )
             await Promise.all(timers.map((t) => t.promise))
+
+            if(ajaxes.length == 0 && timers.length == 0) {
+                // não tem nem ajaxes e nem timers
+                break
+            }
         }
     },
 

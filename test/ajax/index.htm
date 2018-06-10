@@ -5,7 +5,7 @@
     <script src="../js/jquery.js"></script>
     <script>
         $(document).ready(function() {
-            $.post('?', function(data, textStatus, xhr) {
+            $.get('?', function(data, textStatus, xhr) {
                 $(document.body).append('<span>Me encontre!</span>');
             });
         });
