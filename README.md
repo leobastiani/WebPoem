@@ -2,6 +2,12 @@
 Se declare para seu navegador.
 
 ## Linux:
+### Como utilizar o virtual env?
+```sh
+pip3 install virtualenv
+source env/python3/Scripts/activate
+```
+
 ### Como instalar:
 <!-- https://gist.github.com/ziadoz/3e8ab7e944d02fe872c3454d17af31a5 -->
 ```sh
@@ -25,4 +31,14 @@ pip install -r requirements.txt
 # executando o caso de teste da plataforma sucupira
 python WebPoem.py test/sucupira1/sucupira1.txt -o sucupira1.py
 python sucupira1.py
+```
+
+### Como testar?:
+Execute o servidor http em localhost na pasta /test
+```sh
+/test $ sh server.sh
+```
+Execute o script de testes
+```sh
+/ $ sh test.sh --help
 ```
