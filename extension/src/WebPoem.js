@@ -97,7 +97,7 @@ let WebPoem = {
     },
 
 
-    findElement(query) {
+    findElement(query, parent) {
         // vou tentar pelo conteúdo agora
         query = WebPoem.stdQuery(query)
 
@@ -133,7 +133,7 @@ let WebPoem = {
         }
 
         try {
-            _findElement(document.body, query)
+            _findElement(parent, query)
         } catch(e) {
             // encontrei o elemento
             return e

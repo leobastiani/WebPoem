@@ -1,0 +1,17 @@
+checkbox_radio
+
+Navegue com o Google Chrome
+
+Acesse
+    http://localhost:3000/"+WebPoem.title+"/index.htm
+
+Marque
+    Marque a opção 2 e 3
+        2
+        3
+    Marque a opção 1
+        1
+
+Clique em Enviar
+
+Encontre "Me encontre"

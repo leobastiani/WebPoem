@@ -190,12 +190,13 @@ def preencha():
 
     # as funções que estarão
     # no arquivo compilado
+    func = 'findInput'
     if 'PREENCHA' in StatementAtual:
-        func = 'findInput'
         fill = 'fill'
     elif 'SELECIONE' in StatementAtual:
-        func = 'findInput'
         fill = 'select'
+    elif 'MARQUE' in StatementAtual:
+        fill = 'check'
 
     identacaoAtual += 1
     campoAndValue = consumeByIdent()
@@ -219,7 +220,7 @@ def preencha():
                 values.append(campoAndValue[j].strip())
                 j+=1
             yield [campoAndValue[i].strip(), values]
-            i = j+1
+            i = j
 
     # transforma [x1, x2, ...]
     # em [(x1, x2), ...]
@@ -355,6 +356,7 @@ class Statement:
         'NÃO': ['NÃO', 'NAO'],
         'PREENCHA': ['preencha', 'preencher'],
         'SELECIONE': ['selecione', 'selecionar'],
+        'MARQUE': ['marque', 'assinale'],
         'PREP': ['com', 'de'],
         'ARTIGO': ['o', 'a', 'uma', 'um'],
         'ACAO': {
@@ -546,6 +548,7 @@ Statements = [
     [ preencha,
         Statement('PREENCHA'),
         Statement('SELECIONE'),
+        Statement('MARQUE'),
     ],
     [ espere,
         Statement('ESPERE', 'input'),

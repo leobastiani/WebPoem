@@ -5,8 +5,10 @@ from WebPoem import *
 
 @WebPoemMain
 def main():
-    WebPoem.title = "encontre"
+    WebPoem.title = "checkbox_radio"
     driver = GoogleChrome()
     goTo("http://localhost:3000/"+WebPoem.title+"/index.htm")
+    findInput("Marque a opção 2 e 3").check("2", "3")
+    findInput("Marque a opção 1").check("1")
+    findElement("Enviar").click()
     assert search("Me encontre")
-    assert not search("Não me encontre")

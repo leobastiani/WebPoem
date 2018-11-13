@@ -126,34 +126,22 @@ def _findElement(str):
     # não encontrei
     return []
 
-def findElement(str):
-    if WebPoem.alert:
-        if str == 'OK':
-            return WebPoem.alert
+# retorna o document.body da página
+def DocumentBody():
+    els = find(By.TAG_NAME, 'body')
+
+    import code
+    code.interact(local=dict(globals(), **locals()))
     
-    # tentativa pelo simples
-    simples = _findElement(str)
-    if len(simples) != 0:
-        return simples
 
-    # agora é a minha própria tentativa
-    # procura um elemento que o tenha esse texto
-    # primeiro, vamos tratar esse texto
-    return Elements(WebPoemJs("window.WebPoem.findElement('" + str + "')"))
+def findElement(*args, **kw):
+    DocumentBody().findElement(*args, **kw)
 
-def findInput(str, func='findInput'):
-    # tentativa pelo simples
-    simples = _findElement(str)
-    if len(simples) != 0:
-        return simples
+def findInput(*args, **kw):
+    DocumentBody().findInput(*args, **kw)
 
-    # agora é a minha própria tentativa
-    # procura um elemento que o tenha esse texto
-    # primeiro, vamos tratar esse texto
-    return Elements(WebPoemJs("window.WebPoem."+func+"(window.WebPoem.findElement('" + str + "'))"))
-
-def findSelect(str):
-    return findInput(str, 'findSelect')
+def findSelect(*args, **kw):
+    DocumentBody().findInput(*args, **kw)
 
 def execFile(fileName):
     with open('js/'+fileName+'.js', 'r', encoding='utf-8') as file:

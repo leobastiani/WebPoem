@@ -70,6 +70,29 @@ class Elements:
 
                 return Elements(e)
 
+    def check(self, *vals):
+        res = []
+        for e in self.els:
+            if e.tag_name == 'input':
+                t = e.get_attribute('type')
+                if t is None:
+                    t = "text"
+                if t == 'hidden':
+                    continue
+                if t in ['checkbox', 'radio']:
+                    res.append(e)
+        for i, val in enumerate(vals):
+            # caso o parametro seja um número
+            # ou outro tipo de objeto
+            val = str(val)
+            e = res[i]
+            e.click()
+            # ativa os callbacks
+            # de onkeyup
+            e.send_keys(Keys.TAB)
+            Elements.last = e
+        return Elements(res)
+
     def click(self):
         if len(self.els) == 0:
             return False
@@ -85,6 +108,36 @@ class Elements:
             return True
 
         return False
+
+    # Funções FIND
+    def findElement(self, str):
+        if WebPoem.alert:
+            if str == 'OK':
+                return WebPoem.alert
+        
+        # tentativa pelo simples
+        simples = _findElement(str)
+        if len(simples) != 0:
+            return simples
+
+        # agora é a minha própria tentativa
+        # procura um elemento que o tenha esse texto
+        # primeiro, vamos tratar esse texto
+        return Elements(WebPoemJs("window.WebPoem.findElement('" + str + "', arguments[0])", *self.els))
+
+    def findInput(self, str, func='findInput'):
+        # tentativa pelo simples
+        simples = _findElement(str)
+        if len(simples) != 0:
+            return simples
+
+        # agora é a minha própria tentativa
+        # procura um elemento que o tenha esse texto
+        # primeiro, vamos tratar esse texto
+        return Elements(WebPoemJs("window.WebPoem."+func+"(window.WebPoem.findElement('" + str + "', arguments[0]))", *self.els))
+
+    def findSelect(self, str):
+        return self.findInput(str, 'findSelect')
 
     def send_keys(self, *args, **kwargs):
         for e in self.els:

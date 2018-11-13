@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Teste WebPoem</title>
+</head>
+<body>
+
+    <div class="form-group">
+        <label>Marque a opção 2 e 3:</label>
+        <div><input type="checkbox" name="ch" value="1"> 1</div>
+        <div><input type="checkbox" name="ch" value="2"> 2</div>
+        <div><input type="checkbox" name="ch" value="3"> 3</div>
+    </div>
+    <div class="form-group">
+        <label>Marque a opção 1:</label>
+        <div><input type="radio" name="ch" value="1"> 1</div>
+        <div><input type="radio" name="ch" value="2"> 2</div>
+        <div><input type="radio" name="ch" value="3"> 3</div>
+    </div>
+    <input type="button" value="Enviar"><br/>
+
+    <script src="../js/jquery.js"></script>
+    <script>
+        $(':button').click(function(e) {
+            $(document.body).append('<span>Me encontre!</span>');
+        });
+    </script>
+
+</body>
+</html>
