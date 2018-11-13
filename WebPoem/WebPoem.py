@@ -29,8 +29,10 @@ class WebPoem:
     KEEP_DATA = False
 
     @staticmethod
-    def keepData():
-        WebPoem.KEEP_DATA = True
+    def keepData(title=None):
+        if not title:
+            title = WebPoem.title
+        WebPoem.KEEP_DATA = title
 
 def WebPoemMain(main, *args, **kwargs):
     try:
@@ -58,7 +60,7 @@ def GoogleChrome():
     options = Options()
     options.add_extension('./extension/dist/WebPoem.crx')
     if WebPoem.KEEP_DATA:
-        options.add_argument('user-data-dir='+WebPoem.title+'/user-data')
+        options.add_argument('user-data-dir='+WebPoem.KEEP_DATA+'/user-data')
 
     WebPoem.driver = selenium.webdriver.chrome.webdriver.WebDriver(chrome_options=options)
     # define driver como global
@@ -93,6 +95,12 @@ def find(by, str):
 
 def isStdName(str):
     return bool(re.fullmatch(r'[\w\-\.# >\d\(\):]+', str))
+
+
+# arrasta a barra de scroll até o final
+def scroll_down():
+    WebPoemJs('window.scrollBy(0,1000)')
+    wait()
 
 
 # tentativa de encontrar um elemento
