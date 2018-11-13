@@ -61,7 +61,7 @@ def GoogleChrome():
     extPath = Path(os.path.realpath(__file__)).parents[1] / 'extension/dist/WebPoem.crx'
     options.add_extension(extPath)
     if WebPoem.KEEP_DATA:
-        options.add_argument('user-data-dir='+WebPoem.KEEP_DATA+'/user-data')
+        options.add_argument('user-data-dir='+str(Path(WebPoem.KEEP_DATA) / 'user-data'))
 
     WebPoem.driver = selenium.webdriver.chrome.webdriver.WebDriver(chrome_options=options)
     # define driver como global
