@@ -7,6 +7,7 @@ import sys
 import argparse
 from pathlib import Path
 import glob
+import os
 
 def isWildcard(file):
     return file.find('*') != -1 or file.find('?') != -1
@@ -28,6 +29,21 @@ if __name__ == '__main__':
     parser.add_argument('--output', '-o', type=str, nargs='?')
     args = parser.parse_args()
     files = args.files
+
+    if len(files) == 1:
+        # testa para saber se é uma navegação contínua
+        file = files[0]
+        if not Path(file).exists():
+            os.makedirs(file)
+        if Path(file).is_dir():
+            @WebPoemMain
+            def main():
+                WebPoem.title = file
+                WebPoem.keepData(file)
+                driver = GoogleChrome()
+                import code
+                code.interact(local=dict(globals(), **locals()))
+
     files = sum([toFile(f) for f in args.files], [])
     if args.output:
         # apenas compilo
