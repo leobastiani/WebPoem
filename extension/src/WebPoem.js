@@ -18,7 +18,7 @@ let WebPoem = {
 
     Config,
 
-    wait: async function () {
+    wait: async function (waitAjax=true, waitTimer=true) {
         // faz isso N vezes
         // para os timers que
         // criaram ajaxs
@@ -26,15 +26,15 @@ let WebPoem = {
         for(var i=0; i<Config.WAIT_N; i++) {
             // os ajax criam
             // timers
-            let ajaxes = WebPoem.ajaxes()
+            let ajaxes = waitAjax ? WebPoem.ajaxes() : []
             await Promise.all(ajaxes.map((a) => a.promise))
 
             // alguns ajax criam timers
-            let timers = WebPoem.timers().filter((t) =>
+            let timers = waitTimer ? WebPoem.timers().filter((t) =>
                 // o delay deve ser
                 // menor do que o máximo configurado
                 t.delay <= Config.MAX_DELAY
-            )
+            ) : []
             await Promise.all(timers.map((t) => t.promise))
 
             if(ajaxes.length == 0 && timers.length == 0) {
