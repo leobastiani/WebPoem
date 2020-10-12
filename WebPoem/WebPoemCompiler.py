@@ -256,7 +256,7 @@ def callFunction():
         func = 'send_keys'
 
     return func+'('+inp+')\n'+consume()
-    
+
 
 def acao():
     debug("StatementAtual:", StatementAtual)
@@ -403,7 +403,7 @@ class Statement:
             # pq antes da identação tem um \n
             content = re.sub(r'^ +', '', content)
         return content
-    
+
     def __str__(self):
         return str(self.statements)
 
@@ -508,7 +508,7 @@ Statements = [
     # por isso ele é uma lista
     # e segue esse padrão
     # [ FuncaoReferenteParaTratar, ...listaDeStatements]
-    
+
     # Navegue com o Google Chrome
     [ navegue,
         Statement('NAVEGUE', 'PREP', 'ARTIGO', 'NAVEGADOR'),
@@ -562,7 +562,7 @@ Statements = [
     [ pythonCode,
         Statement('input'),
     ],
-    
+
 ]
 
 

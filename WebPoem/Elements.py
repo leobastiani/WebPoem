@@ -8,11 +8,11 @@ from WebPoem import WebPoem
 
 class Elements:
     last = None
-    
+
     def __init__(self, els):
         # els sempre vai ser uma lista, mesmo que seja de apenas 1 elemento
         self.els = els if type(els) is list else [els]
-    
+
     def fill(self, *vals):
         res = []
         for e in self.els:
@@ -56,7 +56,7 @@ class Elements:
                 # seleciona o primeiro
                 val = str(vals[0])
                 select.select_by_visible_text(val)
-                
+
                 if len(vals) == 1:
                     return Elements(e)
 

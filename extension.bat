@@ -5,8 +5,8 @@ if ["%*"] == ["--watch"] set watch=T
 if ["%*"] == ["-w"] set watch=T
 
 if ["%watch%"] == ["T"] (
-    call nodemon --ignore test --watch extension\src --exec "cls && extension"
-    goto:eof
+	call nodemon --ignore test --watch extension\src --exec "cls && extension"
+	goto:eof
 )
 
 rem o compilador comeca a partir daqui

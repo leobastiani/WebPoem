@@ -77,7 +77,7 @@ try:
 
             if os.path.exists(title):
                 shutil.rmtree(title)
-            
+
         # chamo essa função que acabei de criar
         testcase = unittest.FunctionTestCase(
             testFunction,

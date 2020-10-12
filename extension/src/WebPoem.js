@@ -7,13 +7,13 @@ let Config = require('./Config')
 let WebPoem = {
 
     /**
-     * funções de temporização
-     */
+    * funções de temporização
+    */
     timers: require('./Timer'),
 
     /**
-     * funções de ajax
-     */
+    * funções de ajax
+    */
     ajaxes: require('./Ajax'),
 
     Config,
@@ -102,9 +102,9 @@ let WebPoem = {
         query = WebPoem.stdQuery(query)
 
         /**
-         * Use try catch para obter o retorno
-         * dessa função
-         */
+        * Use try catch para obter o retorno
+        * dessa função
+        */
         function _findElement(els, query) {
             let children = els.children
             // se não tenho mais filhos, paro por aqui
@@ -142,8 +142,8 @@ let WebPoem = {
     },
 
     /**
-     * Encontra um input para o determinado elemento
-     */
+    * Encontra um input para o determinado elemento
+    */
     findInput(e) {
         if(e == null) {
             return null

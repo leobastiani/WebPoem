@@ -9,4 +9,3 @@ var execFunctionGlobal = function execFunctionGlobal(fn) {
 
 execFunctionGlobal(function () {
     try {
-        

@@ -6,7 +6,7 @@ from selenium.webdriver.common.keys import Keys
 class Alert:
     def __init__(self, alert):
         self.alert = alert
-    
+
     def click(self):
         self.alert.accept()
 

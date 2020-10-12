@@ -143,7 +143,7 @@ def findElement(str):
     if WebPoem.alert:
         if str == 'OK':
             return WebPoem.alert
-    
+
     # tentativa pelo simples
     simples = _findElement(str)
     if len(simples) != 0:
