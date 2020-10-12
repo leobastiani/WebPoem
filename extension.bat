@@ -13,14 +13,12 @@ rem o compilador comeca a partir daqui
 
 rem call browserify extension\src\WebPoem.js -o extension\unpacked\WebPoem.unwrapped.js -t [ babelify --presets [ es2015 ] ]
 call browserify extension\src\WebPoem.js -o extension\unpacked\WebPoem.unwrapped.js
-cat extension\wrapper\header.js > extension\unpacked\WebPoem.js
-cat extension\unpacked\WebPoem.unwrapped.js >> extension\unpacked\WebPoem.js
-cat extension\wrapper\bottom.js >> extension\unpacked\WebPoem.js
+type extension\wrapper\header.js > extension\unpacked\WebPoem.js
+type extension\unpacked\WebPoem.unwrapped.js >> extension\unpacked\WebPoem.js
+type extension\wrapper\bottom.js >> extension\unpacked\WebPoem.js
 
 pushd extension\unpacked
 7z a ..\dist\WebPoem.zip WebPoem.js manifest.json
 popd
 
-pushd bin
-buildcrx_winnt_x86.exe ..\extension\dist\WebPoem.zip ..\extension\dist\WebPoem.pem
-popd
+call crx3 -p -o extension\dist\WebPoem.crx extension\unpacked
